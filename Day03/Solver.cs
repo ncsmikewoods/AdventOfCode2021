@@ -23,7 +23,7 @@ namespace Day03
             {
                 if (i != 0) gammaRate <<= 1;
 
-                var gammaVal = GetGammaValueForBit(i);
+                var gammaVal = GetMostCommonValueForBit(i, _records);
                 gammaRate |= gammaVal;
             }
 
@@ -40,43 +40,55 @@ namespace Day03
             return temp & mask;
         }
 
+        int GetMostCommonValueForBit(int i, List<string> records)
+        {
+            var ones = records.Count(x => x[i] == '1');
+            var zeroes = records.Count(x => x[i] == '0');
+
+            return ones >= zeroes ? 1 : 0;
+        }
+
+        public double Solve2()
+        {
+            var oxygenRating = Convert.ToInt32(GetOxygenRating(_records), 2);
+            var c02Rating = Convert.ToInt32(GetC02Rating(_records), 2);
+
+            return oxygenRating * c02Rating;
+        }
+
+        string GetOxygenRating(List<string> records)
+        {
+            if (records.Count == 1)
+            {
+                return records.First();
+            }
+
+            var digit = GetMostCommonValueForBit(0, records);
+
+            var filteredRecords = records.Where(x => x.StartsWith(digit.ToString())).ToList();
+            var rest = GetOxygenRating(filteredRecords.Select(x => x[1..]).ToList());
+
+            return digit + rest;
+        }
+
+        string GetC02Rating(List<string> records)
+        {
+            if (records.Count == 1)
+            {
+                return records.First();
+            }
+
+            var digit = GetMostCommonValueForBit(0, records) == 1 ? 0 : 1;
+
+            var filteredRecords = records.Where(x => x.StartsWith(digit.ToString())).ToList();
+            var rest = GetC02Rating(filteredRecords.Select(x => x[1..]).ToList());
+
+            return digit + rest;
+        }
+
         public static string ToBinaryString(int num)
         {
             return Convert.ToString(num, 2).PadLeft(32, '0');
-        }
-
-        // public int Solve2()
-        // {
-        //     var horizontal = 0;
-        //     var depth = 0;
-        //     var aim = 0;
-        //
-        //     foreach (var instruction in _instructions)
-        //     {
-        //         switch (instruction.Direction)
-        //         {
-        //             case "forward":
-        //                 horizontal += instruction.Distance;
-        //                 depth += instruction.Distance * aim;
-        //                 break;
-        //             case "down":
-        //                 aim += instruction.Distance;
-        //                 break;
-        //             case "up":
-        //                 aim -= instruction.Distance;
-        //                 break;
-        //         }
-        //     }
-        //
-        //     return horizontal * depth;
-        // }
-
-        int GetGammaValueForBit(int i)
-        {
-            var ones = _records.Count(x => x[i] == '1');
-            var zeroes = _records.Count(x => x[i] == '0');
-
-            return ones > zeroes ? 1 : 0;
         }
 
         void GetInputs()

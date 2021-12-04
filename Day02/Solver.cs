@@ -7,7 +7,7 @@ namespace Day02
 {
     public class Solver
     {
-        readonly List<Instruction> _instructions = new();
+        List<Instruction> _instructions = new();
 
         public Solver()
         {

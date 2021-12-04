@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 
 namespace Day04
 {
@@ -26,24 +25,44 @@ namespace Day04
                 }
 
                 var winner = _boards.FirstOrDefault(x => x.HasBingo());
+                if (winner == default) continue;
 
-                if (winner != default)
-                {
-                    var boardScore = winner.CalculateScore();
-                    return draw * boardScore;
-                }
+                var boardScore = winner.CalculateScore();
+                return draw * boardScore;
             }
 
             return 0;
         }
 
-        // public double Solve2()
-        // {
-        //     var oxygenRating = Convert.ToInt32(GetOxygenRating(_records), 2);
-        //     var c02Rating = Convert.ToInt32(GetC02Rating(_records), 2);
-        //
-        //     return oxygenRating * c02Rating;
-        // }
+        public int Solve2()
+        {
+            var solvingBoards = new List<Board>(_boards);
+
+            while (solvingBoards.Count > 0)
+            {
+                foreach (var draw in _draws)
+                {
+                    foreach (var board in solvingBoards)
+                    {
+                        board.PickNumber(draw);
+                    }
+
+                    var winner = solvingBoards.FirstOrDefault(x => x.HasBingo());
+                    if (winner == default) continue;
+
+                    if (solvingBoards.Count == 1)
+                    {
+                        return draw * winner.CalculateScore();
+                    }
+
+                    solvingBoards.Remove(winner);
+                    break;
+                }
+            }
+            
+            Console.WriteLine("We shouldn't have gotten here");
+            return 0;
+        }
 
         void GetInputs()
         {

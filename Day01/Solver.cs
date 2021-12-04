@@ -7,7 +7,7 @@ namespace Day01
 {
     public class Solver
     {
-        List<int> _depths;
+        List<int> _depths = new();
 
         public Solver()
         {

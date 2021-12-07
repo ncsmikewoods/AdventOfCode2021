@@ -19,16 +19,23 @@ namespace Day07
         {
             var medianPosition = CalculateMedian(_crabs);
 
-            var cost = CalculateCostToMoveToPosition(_histogram, medianPosition);
+            var cost = CalculateCostToMoveToPosition(_histogram, medianPosition, CalculatePart1DistanceCost);
 
             return cost;
         }
 
-        // public double Solve2()
-        // {
-        //     var fishCopy = new Dictionary<int, double>(_fish);
-        //     return SimulateFish(fishCopy, 256);
-        // }
+        public int Solve2()
+        {
+            var costs = new List<int>();
+
+            for (var i = _crabs.First(); i < _crabs.Last(); i++)
+            {
+                var cost = CalculateCostToMoveToPosition(_histogram, i, CalculatePart2DistanceCost);
+                costs.Add(cost);
+            }
+
+            return costs.Min();
+        }
 
         static int CalculateMedian(List<int> crabs)
         {
@@ -43,13 +50,13 @@ namespace Day07
             return crabs.ElementAt(count / 2);
         }
 
-        static int CalculateCostToMoveToPosition(Dictionary<int, int> histogram, int destination)
+        static int CalculateCostToMoveToPosition(Dictionary<int, int> histogram, int destination, Func<int,int,int> calculationStrategy)
         {
             var cost = 0;
 
             foreach (var key in histogram.Keys)
             {
-                var distance = Math.Abs(destination - key);
+                var distance = calculationStrategy(key, destination);
 
                 cost += distance * histogram[key];
             }
@@ -57,7 +64,18 @@ namespace Day07
             return cost;
         }
 
-        
+        static int CalculatePart1DistanceCost(int start, int end)
+        {
+            return Math.Abs(start - end);
+        }
+
+        static int CalculatePart2DistanceCost(int start, int end)
+        {
+            var distance = Math.Abs(start - end);
+
+            return (int)((Math.Pow(distance, 2) + distance) / 2);
+        }
+
         void GetInputs()
         {
             _crabs = File.ReadAllText("input.txt")

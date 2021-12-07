@@ -7,38 +7,61 @@ namespace Day06
 {
     public class Solver
     {
-        Dictionary<int, int> _fish;
+        Dictionary<int, double> _fish;
 
         public Solver()
         {
             GetInputs();
         }
 
-        public int Solve1()
+        public double Solve1()
         {
-            var daysToSim = 80;
+            var fishCopy = new Dictionary<int, double>(_fish);
+            return SimulateFish(fishCopy, 80);
+        }
+
+        public double Solve2()
+        {
+            var fishCopy = new Dictionary<int, double>(_fish);
+            return SimulateFish(fishCopy, 256);
+        }
+
+        static double SimulateFish(Dictionary<int, double> fish, int daysToSim)
+        {
+            // PrintFish(fish);
 
             for (var i = 1; i <= daysToSim; i++)
             {
                 for (var j = 0; j <= 8; j++)
                 {
-                    _fish[j - 1] = _fish[j];
-                    _fish[j] = 0;
+                    fish[j - 1] = fish[j];
+                    fish[j] = 0;
                 }
 
                 // spawn
-                _fish[6] += _fish[-1];
-                _fish[8] += _fish[-1];
-                _fish[-1] = 0;
+                fish[6] += fish[-1];
+                fish[8] += fish[-1];
+                fish[-1] = 0;
             }
 
-            return _fish.Values.Sum();
+            // PrintFish(fish);
+
+            return fish.Values.Sum();
         }
 
-        // public int Solve2()
-        // {
-        //     return 0;
-        // }
+        static void PrintFish(Dictionary<int, double> fish)
+        {
+            Console.WriteLine($"Day 8 fish: {fish[8]}");
+            Console.WriteLine($"Day 7 fish: {fish[7]}");
+            Console.WriteLine($"Day 6 fish: {fish[6]}");
+            Console.WriteLine($"Day 5 fish: {fish[5]}");
+            Console.WriteLine($"Day 4 fish: {fish[4]}");
+            Console.WriteLine($"Day 3 fish: {fish[3]}");
+            Console.WriteLine($"Day 2 fish: {fish[2]}");
+            Console.WriteLine($"Day 1 fish: {fish[1]}");
+            Console.WriteLine($"Day 0 fish: {fish[0]}");
+            Console.WriteLine($"Day -1 fish: {fish[-1]}");
+        }
 
         void GetInputs()
         {
@@ -46,9 +69,10 @@ namespace Day06
                 .Split(",")
                 .Select(int.Parse)
                 .ToList();
+
             Console.WriteLine($"Read {starterFish.Count} fish");
 
-            _fish = new Dictionary<int, int>
+            _fish = new Dictionary<int, double>
             {
                 [-1] = 0,
                 [0] = 0,

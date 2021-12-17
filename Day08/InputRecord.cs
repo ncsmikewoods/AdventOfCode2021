@@ -67,7 +67,7 @@ namespace Day08
             ///////////////////////////////////////////////
             var theFiveLengths = Patterns.Where(x => x.Length == 5).ToList();
 
-            // 3 is the only 5 length pattern that is length 3 when subtracting the 1 code from it(
+            // 3 is the only 5 length pattern that is length 3 when subtracting the 1 code from it
             Code[3] = theFiveLengths.Single(x => x.Except(Code[1]).ToList().Count == 3);
 
             // 2, 3, and 5 have only horizontal segments in common
@@ -91,7 +91,7 @@ namespace Day08
             Code[0] = theSixLengths.Single(x => x.Except(horizontalSegments).ToList().Count == 4);
 
             // 9 is the only 6 length pattern than is length 0 when subtracting the horizontals and 4 code from it
-            Code[9] = theSixLengths.Single(x => string.Concat(x.Except(horizontalSegments)).Except(Code[4]).ToList().Count == 0);
+            Code[9] = theSixLengths.Single(x => x.Except(horizontalSegments).Except(Code[4]).ToList().Count == 0);
 
             // process of elimination for 6 (its length is 6 and isn't 0 or 9)
             Code[6] = theSixLengths.Single(x => x != Code[0] && x != Code[9]);

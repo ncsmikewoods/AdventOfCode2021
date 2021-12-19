@@ -34,7 +34,50 @@ namespace Day10
             return syntaxErrorCount;
         }
 
-        static void ParseLine(string line)
+        public double Solve2()
+        {
+            var incompleteLines = new List<Stack<char>>();
+
+            foreach (var line in _lines)
+            {
+                try
+                {
+                    incompleteLines.Add(ParseLine(line));
+                }
+                catch (InvalidChunkException)
+                {
+                }
+            }
+
+            var scores = incompleteLines.Select(CalculateCompletionScore).ToList();
+            return GetMedian(scores);
+        }
+
+        static double GetMedian(List<double> scores)
+        {
+            scores.Sort();
+            var midpoint = (int)Math.Floor(scores.Count / 2d);
+            return scores.ElementAt(midpoint);
+        }
+
+        static double CalculateCompletionScore(Stack<char> stack)
+        {
+            var score = 0d;
+            foreach (var c in stack)
+            {
+                score *= 5;
+                score += c switch
+                {
+                    '(' => 1,
+                    '[' => 2,
+                    '{' => 3,
+                    '<' => 4
+                };
+            }
+            return score;
+        }
+
+        static Stack<char> ParseLine(string line)
         {
             var chunks = new Stack<char>();
 
@@ -52,9 +95,11 @@ namespace Day10
                     continue;
                 }
 
-                Console.WriteLine($"Corrupted Line: {line}");
+                // Console.WriteLine($"Corrupted Line: {line}");
                 throw new InvalidChunkException(character);
             }
+
+            return chunks;
         }
 
         static bool IsTerminator(char next)
@@ -77,47 +122,10 @@ namespace Day10
             };
         }
 
-
-        double CalculateErrorScore(int parenCount, int squareCount, int curlyCount, int angleCount)
-        {
-            var sum = 0d;
-            sum += parenCount * 3;
-            sum += squareCount * 57;
-            sum += curlyCount * 1197;
-            sum += angleCount * 25137;
-            return sum;
-        }
-
-        // public int Solve2()
-        // {
-        //     
-        // }
-
-        
         void GetInputs()
         {
             _lines = File.ReadAllLines("input.txt").ToList();
             Console.WriteLine($"Read {_lines.Count} lines");
         }
-    }
-
-    public class InvalidChunkException : Exception
-    {
-        public InvalidChunkException(char character)
-        {
-            Character = character;
-
-            ErrorValue = character switch
-            {
-                ')' => 3,
-                ']' => 57,
-                '}' => 1197,
-                '>' => 25_137
-            };
-        }
-
-        public char Character { get; set; }
-
-        public int ErrorValue { get; set; }
     }
 }
